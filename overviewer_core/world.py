@@ -1383,22 +1383,22 @@ class RegionSet(object):
             if palette_entry['Properties'].get('eye', 'false') == 'true':
                 data |= 4
         elif key == 'minecraft:respawn_anchor':
-             data = int(palette_entry['Properties']['charges'])
+            data = int(palette_entry['Properties']['charges'])
         elif key == 'minecraft:cauldron':
-             data = 0
-             print(f'Found cauldron:{data}')
+            data = 0
+            #print(f'Found cauldron:{data}')
         elif key == 'minecraft:lava_cauldron':
-             data = 3
-             print(f'Found lava cauldron:{data}')
+            data = 3
+            #print(f'Found lava cauldron:{data}')
         elif key == 'minecraft:water_cauldron':
-             data = int(palette_entry['Properties'].get('level', '0'))
-             print(f'Found water cauldron:{data}')
+            data = int(palette_entry['Properties'].get('level', '0'))
+            #print(f'Found water cauldron:{data}')
         elif key == 'minecraft:powder_snow_cauldron':
-             data = int(palette_entry['Properties'].get('level', '0'))
-             print(f'Found snow cauldron:{data}')
+            data = int(palette_entry['Properties'].get('level', '0'))
+            #print(f'Found snow cauldron:{data}')
         elif key == 'minecraft:structure_block':
-             block_mode = palette_entry['Properties'].get('mode', 'save')
-             data = {'save': 0, 'load': 1, 'corner': 2, 'data': 3}.get(block_mode, 0)
+            block_mode = palette_entry['Properties'].get('mode', 'save')
+            data = {'save': 0, 'load': 1, 'corner': 2, 'data': 3}.get(block_mode, 0)
         elif key == 'minecraft:cake':
             data = int(palette_entry['Properties'].get('bites', '0'))
         elif key == 'minecraft:farmland':
