@@ -198,10 +198,10 @@ class World(object):
         disp_spawnZ = spawnZ = data['SpawnZ']
 
         ## clamp spawnY to a sane value, in-chunk value
-        if spawnY < 0:
-            spawnY = 0
-        if spawnY > 255:
-            spawnY = 255
+        if spawnY < -64:
+            spawnY = -64
+        if spawnY > 319:
+            spawnY = 319
             
         ## The chunk that holds the spawn location
         chunkX = spawnX//16
@@ -236,7 +236,7 @@ class World(object):
                 spawnY += 1
             # Next section, start at local 0
             inChunkY = 0
-        return spawnX, 256, spawnZ
+        return spawnX, 320, spawnZ
 
 class RegionSet(object):
     """This object is the gateway to a particular Minecraft dimension within a
@@ -986,6 +986,10 @@ class RegionSet(object):
             'minecraft:sweet_berry_bush': (11505, 0),
             'minecraft:campfire': (11506, 0),
             'minecraft:bell': (11507, 0),
+            # 1.17 blocks
+            'minecraft:lava_cauldron': (11701, 0),
+            'minecraft:powder_snow_cauldron': (11702, 0),
+            'minecraft:water_cauldron': (11703, 0),
             # adding a gap in the numbering of walls to keep them all
             # blocks >= 1792 and <= 2047 are considered walls
             'minecraft:andesite_wall': (1792, 0),
@@ -1379,13 +1383,22 @@ class RegionSet(object):
             if palette_entry['Properties'].get('eye', 'false') == 'true':
                 data |= 4
         elif key == 'minecraft:respawn_anchor':
-            data = int(palette_entry['Properties']['charges'])
-        elif key in ['minecraft:cauldron', 'minecraft:water_cauldron',
-                     'minecraft:lava_cauldron', 'minecraft:powder_snow_cauldron']:
-            data |= int(palette_entry.get('Properties', {}).get('level', '0'))
+             data = int(palette_entry['Properties']['charges'])
+        elif key == 'minecraft:cauldron':
+             data = 0
+             print(f'Found cauldron:{data}')
+        elif key == 'minecraft:lava_cauldron':
+             data = 3
+             print(f'Found lava cauldron:{data}')
+        elif key == 'minecraft:water_cauldron':
+             data = int(palette_entry['Properties'].get('level', '0'))
+             print(f'Found water cauldron:{data}')
+        elif key == 'minecraft:powder_snow_cauldron':
+             data = int(palette_entry['Properties'].get('level', '0'))
+             print(f'Found snow cauldron:{data}')
         elif key == 'minecraft:structure_block':
-            block_mode = palette_entry['Properties'].get('mode', 'save')
-            data = {'save': 0, 'load': 1, 'corner': 2, 'data': 3}.get(block_mode, 0)
+             block_mode = palette_entry['Properties'].get('mode', 'save')
+             data = {'save': 0, 'load': 1, 'corner': 2, 'data': 3}.get(block_mode, 0)
         elif key == 'minecraft:cake':
             data = int(palette_entry['Properties'].get('bites', '0'))
         elif key == 'minecraft:farmland':

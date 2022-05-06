@@ -1101,10 +1101,10 @@ Depth
     **Options**
 
     min
-        lowest level of blocks to render. Default: 0
+        lowest level of blocks to render. Default: -64
 
     max
-        highest level of blocks to render. Default: 255
+        highest level of blocks to render. Default: 319
 
 Exposed
     Only renders blocks that are exposed (adjacent to a transparent block).
@@ -1244,8 +1244,10 @@ BiomeOverlay
 
     biomes
         A list of ("biome name", (r, g, b)) tuples to use as colors. Any
-        biome not specified won't be highlighted. If not provided then 
-        a default list of biomes and colors is used.
+        biome not specified won't be highlighted. If no list is provided,
+         then a default list of biomes and colors is used, that is trying
+         to match the de-facto-standard for biome coloring established
+         by the Amidst project: https://github.com/toolbox4minecraft/amidst/wiki/Biome-Color-Table
 
         Example::
 

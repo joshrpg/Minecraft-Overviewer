@@ -31,7 +31,7 @@ from contextlib import closing
 from multiprocessing import Pool
 from argparse import ArgumentParser
 
-from overviewer_core import config_parser, logger, nbt, world
+from overviewer_core import config_parser, logger, nbt, world, textures
 from overviewer_core.files import FileReplacer, get_fs_caps
 
 UUID_LOOKUP_URL = 'https://sessionserver.mojang.com/session/minecraft/profile/'
@@ -164,7 +164,7 @@ def signWrangler(poi):
     return poi
 
 
-def handleEntities(rset, config, config_path, filters, markers):
+def handleEntities(rset, config, config_path, filters, markers, tex):
     """
     Add markers for Entities or TileEntities.
 
@@ -224,6 +224,15 @@ def handleEntities(rset, config, config_path, filters, markers):
         for marker_dict in results:
             for name, marker_list in marker_dict.items():
                 markers[name]['raw'].extend(marker_list)
+                
+     # Banner Rendering requires a Textures object. Because I don't know if that object is completely thread save
+     # I've placed the code here. This means rendering of banners only happens on a single thread.
+     for name, value in markers.items():
+         for m in value['raw']:
+             print(name, m)
+             #if poi['id'] == "Banner" or poi['id'] == "minecraft:banner":
+             #    # For Banners: render the banner and set as default for this poi
+             #    poi['icon'] = render_and_store_dynamic_icon(render_banner, 0, poi)
 
     logging.info("Done.")
 
@@ -573,6 +582,14 @@ def main():
                 checked=f.get('checked', False),
                 showIconInLegend=f.get('showIconInLegend', False))
             marker_groups[rname].append(group)
+            
+     # Initialize a Textures object. This is required for the rendering of banners
+     # TODO: Is this the correct way to instantiate Textures?
+     tex = textures.Textures(config['texturepath'])
+     f = tex.find_file("assets/minecraft/textures/block/sandstone_top.png", verbose=True)
+     f = tex.find_file("assets/minecraft/textures/block/grass_block_top.png", verbose=True)
+     f = tex.find_file("assets/minecraft/textures/block/diamond_ore.png", verbose=True)
+     f = tex.find_file("assets/minecraft/textures/block/oak_planks.png", verbose=True)
 
     # initialize the structure for the markers
     markers = dict((name, dict(created=False, raw=[], name=filter_name))
@@ -586,7 +603,7 @@ def main():
         for rset in all_rsets:
             rset_filters = list(filter(lambda f: f[3] == rset, filters))
             logging.info("Calling handleEntities for %s with %s filters", rset, len(rset_filters))
-            handleEntities(rset, config, args.config, rset_filters, markers)
+            handleEntities(rset, config, args.config, list(rset_filters), markers, tex)
 
     # apply filters to players
     if not args.skipplayers:
